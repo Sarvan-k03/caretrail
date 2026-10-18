@@ -8,6 +8,8 @@
 
 <p align="center"><b>Your health history, understood, safe, and in the right doctor's hands only when you say so.</b></p>
 
+<p align="center"><a href="https://caretrail-three.vercel.app"><b>Live app: caretrail-three.vercel.app</b></a></p>
+
 ![CareTrail landing page](.github/readme/screenshots/landing.png)
 
 ## Contents
@@ -51,7 +53,7 @@ Three surfaces, one design system: a warm, simple **patient app** (built for a 5
 
 ## Try it in two minutes
 
-1. Run CareTrail (see [Setup instructions](#setup-instructions)) and create an account (email, or *Continue with Google*). For a ready-made record, `npm run seed:test-account` creates a simulated patient with 10 documents (typed and handwritten prescriptions, lab reports, a discharge summary), all read by the real AI pipeline.
+1. Open **[caretrail-three.vercel.app](https://caretrail-three.vercel.app)** (or run it yourself, see [Setup instructions](#setup-instructions)) and create an account (email, or *Continue with Google*). For a ready-made record, `npm run seed:test-account` creates a simulated patient with 10 documents (typed and handwritten prescriptions, lab reports, a discharge summary), all read by the real AI pipeline.
 2. **Home** shows medicine warnings, current medicines, tests still valid and the latest results.
 3. **Add a record** with the sample files in this repo:
    - `demo-docs/overlap-test/p1.pdf` then `demo-docs/overlap-test/p2.jpg`: two doctors prescribing the same medicines under different brands. *Medicines* then shows three "prescribed twice" warnings and a red *Major interaction: Clopilet and Omez*.
