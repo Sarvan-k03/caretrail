@@ -11,6 +11,9 @@ const SECTIONS: { title: string; body: string[] }[] = [
       "Your account: email address and name (from the sign-up form, or from Google if you continue with Google).",
       "What you add: your profile (date of birth, sex, blood group, emergency contact), allergies, the documents you upload or type, and the medicines, test results and diagnoses read from them.",
       "Who saw your records: every time a share link or your emergency card is used, the name the viewer entered and the time. IP addresses are stored only as a one-way hash.",
+      "If you keep records for family members, the same details for each family profile you add.",
+      "Medicine reminders: which doses you marked taken or skipped, and the times you chose for each part of the day.",
+      "Plain-language explanations of your lab results that you ask for, kept so the same report is not explained twice.",
     ],
   },
   {
@@ -24,6 +27,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
     title: "Who processes it for us",
     body: [
       "Google Gemini API reads the documents you upload so you do not have to type them. This build uses Google's free tier, under which Google may use submitted content to improve its services. Only upload documents you are comfortable sending to Google.",
+      "When you ask for a plain-language explanation of a lab report, only the test names, values, units and the lab's printed ranges are sent to Google Gemini. Your name, age and other profile details are never sent. The explanation is shown only to you, never to doctors.",
       "Brevo sends alert emails (for example when your emergency card is used). Google provides sign-in if you choose Continue with Google.",
       "CareTrail does not sell data and does not show advertising.",
     ],
@@ -32,7 +36,10 @@ const SECTIONS: { title: string; body: string[] }[] = [
     title: "Your choices",
     body: [
       "You decide what each share link includes and when it ends. Access history cannot be edited or deleted, so you always see who viewed your records.",
-      "You can download everything you have saved as a FHIR file from your profile. To delete your account and records, use the contact details below.",
+      "You can download everything you have saved as a FHIR file from your profile.",
+      "On this device only: if you turn on Keep a copy on this phone, your emergency card (name, age, blood group, allergies, current medicines, main conditions, emergency contact) is saved in this browser so it opens without signal. Anyone holding your unlocked phone can open it, as with a printed card. It is removed when you log out, delete your account or tap Remove from this phone. The reminder switch is also saved only on the device.",
+      "You can delete your account yourself from Profile, Delete your account. This removes your login, every profile, every record, every stored file and the saved AI reading of your files at once. Only the access history is kept (viewer names, times and hashed IP addresses, with no medical content), because it is built so that no one can edit or delete it.",
+      "Family profiles: the account holder manages each relative's record and receives its alerts. Add a relative only with their agreement, or as their parent or carer. Removing a family profile deletes its records in the same way.",
     ],
   },
 ];
@@ -65,7 +72,7 @@ export default function PrivacyPage() {
           <section aria-labelledby="contact">
             <h2 id="contact" className="text-title font-bold">Contact</h2>
             <p className="mt-3 max-w-[68ch]">For questions or to delete your account, open an issue on the project&apos;s GitHub repository (github.com/Sarvan-k03/caretrail) or use the support email shown on Google&apos;s sign-in screen.</p>
-            <p className="mt-6 text-dense text-ink-2">Last updated 10 October 2026.</p>
+            <p className="mt-6 text-dense text-ink-2">Last updated 18 October 2026.</p>
           </section>
         </div>
       </main>

@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=()" },
         ],
       },
+      {
+        // Browsers must always fetch the newest service worker, or a fix would never reach installed apps.
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }],
+      },
     ];
   },
 };

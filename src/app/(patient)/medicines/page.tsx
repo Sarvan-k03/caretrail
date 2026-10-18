@@ -12,13 +12,22 @@ import { buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SafetyAlerts } from "@/components/medicines/safety-alerts";
 import { MedicineCard } from "@/components/medicines/medicine-card";
+import { RemindersPanel } from "@/components/medicines/reminders-panel";
+import { addDays, adherence, readTimes } from "@/lib/doses/schedule";
+import { doseSlots } from "@/lib/normalise/frequency";
 
 export const metadata: Metadata = { title: "Medicines" };
 
 export default async function MedicinesPage() {
   const { patient } = await requirePatient();
-  const { groups, finished, stopped, warnings, unrecognised } = await loadMedicines(await createClient(), patient.id);
+  const supabase = await createClient();
   const today = todayIST();
+  const weekAgo = addDays(today, -8);
+  const [{ groups, finished, stopped, warnings, unrecognised }, { data: doseLogs }] = await Promise.all([
+    loadMedicines(supabase, patient.id),
+    supabase.from("dose_logs").select("medication_id, dose_date, slot, status").eq("patient_id", patient.id).gte("dose_date", weekAgo),
+  ]);
+  const usedSlots = [...new Set(groups.flatMap((g) => doseSlots(g.current.frequency) ?? []))];
 
   return (
     <>
@@ -63,6 +72,7 @@ export default async function MedicinesPage() {
                 <p className="rounded-card border border-rule bg-sheet p-4 text-ink-2">No medicines are marked as current.</p>
               )}
             </section>
+            {usedSlots.length ? <RemindersPanel times={readTimes(patient.reminder_times)} usedSlots={usedSlots} adherence={adherence(groups, doseLogs ?? [], today)} /> : null}
             {finished.length ? (
               <details className="group rounded-card border border-rule bg-sheet p-4 sm:p-5">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-bold">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FileMagnifyingGlass, Pill, HandPalm } from "@phosphor-icons/react/ssr";
+import { FileMagnifyingGlass, Pill, HandPalm, CheckCircle } from "@phosphor-icons/react/ssr";
 import { Wordmark } from "@/components/wordmark";
 import { buttonClass } from "@/components/ui/button";
 import { SampleBrief, SampleLabCard, SampleViewingPill, SampleWarningCard } from "@/components/marketing/samples";
@@ -24,7 +24,8 @@ const features = [
   },
 ];
 
-export default function Landing() {
+export default async function Landing({ searchParams }: PageProps<"/">) {
+  const deleted = (await searchParams).deleted === "1";
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="mx-auto flex h-18 w-full max-w-6xl items-center justify-between px-5 sm:px-6">
@@ -42,6 +43,11 @@ export default function Landing() {
       </header>
 
       <main className="flex-1">
+        {deleted ? (
+          <p role="status" className="mx-auto mt-2 flex max-w-6xl items-center gap-2 px-5 font-semibold text-verified sm:px-6">
+            <CheckCircle aria-hidden weight="fill" className="size-5 shrink-0" /> Your account and all its records have been deleted.
+          </p>
+        ) : null}
         <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 pt-6 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:pt-10 lg:pb-24">
           <div>
             <h1 className="max-w-[14ch] font-serif text-headline font-medium sm:text-hero">

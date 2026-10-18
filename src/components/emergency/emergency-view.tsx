@@ -48,13 +48,14 @@ export function EmergencyView() {
           <h1 className="text-display font-bold">Please try again in a minute</h1>
         </main>
       ) : (
-        <Card card={state.card} token={state.token} />
+        <EmergencyFacts card={state.card} token={state.token} />
       )}
     </div>
   );
 }
 
-function Card({ card, token }: { card: EmergencyCard; token: string }) {
+/** The critical facts. Without a token (the offline copy on the patient's phone) there is no break-glass form. */
+export function EmergencyFacts({ card, token, footer }: { card: EmergencyCard; token?: string; footer?: React.ReactNode }) {
   return (
     <main className="mx-auto max-w-2xl">
       <section className="flex items-start justify-between gap-4 px-5 pt-5 pb-4">
@@ -128,10 +129,10 @@ function Card({ card, token }: { card: EmergencyCard; token: string }) {
         )}
       </section>
 
-      <BreakGlass token={token} contactName={card.contact.name} />
+      {token ? <BreakGlass token={token} contactName={card.contact.name} /> : null}
 
       <footer className="px-5 pt-2 pb-10 text-dense text-ink-2">
-        This is the patient&apos;s own record, shared through CareTrail. It shows critical information only. Each scan is recorded and the patient is told.
+        {footer ?? "This is the patient's own record, shared through CareTrail. It shows critical information only. Each scan is recorded and the patient is told."}
       </footer>
     </main>
   );

@@ -11,8 +11,15 @@ export class ModelError extends Error {
   }
 }
 
-/** One generateContent call. Returns the raw JSON text the model produced. */
-export async function callGemini(model: string, file: { data: Buffer; mimeType: string }, timeoutMs: number, cancel?: AbortSignal) {
+type Part = { text: string } | { inline_data: { mime_type: string; data: string } };
+
+/** One generateContent call that must answer in JSON matching `schema`. Returns the raw JSON text. */
+export async function generateJson(
+  model: string,
+  request: { system: string; parts: Part[]; schema: object; temperature?: number },
+  timeoutMs: number,
+  cancel?: AbortSignal,
+) {
   const key = serverEnv().GEMINI_API_KEY;
   if (!key) throw new ModelError("unavailable");
   let res: Response;
@@ -21,9 +28,9 @@ export async function callGemini(model: string, file: { data: Buffer; mimeType: 
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: EXTRACTION_SYSTEM_PROMPT }] },
-        contents: [{ role: "user", parts: [{ inline_data: { mime_type: file.mimeType, data: file.data.toString("base64") } }, { text: EXTRACTION_USER_PROMPT }] }],
-        generationConfig: { responseMimeType: "application/json", responseSchema: geminiResponseSchema, temperature: 0 },
+        systemInstruction: { parts: [{ text: request.system }] },
+        contents: [{ role: "user", parts: request.parts }],
+        generationConfig: { responseMimeType: "application/json", responseSchema: request.schema, temperature: request.temperature ?? 0 },
       }),
       signal: cancel ? AbortSignal.any([AbortSignal.timeout(timeoutMs), cancel]) : AbortSignal.timeout(timeoutMs),
     });
@@ -35,4 +42,18 @@ export async function callGemini(model: string, file: { data: Buffer; mimeType: 
   const text = body.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
   if (!text.trim()) throw new ModelError("empty");
   return text;
+}
+
+/** Reads one document. Returns the raw JSON text the model produced. */
+export function callGemini(model: string, file: { data: Buffer; mimeType: string }, timeoutMs: number, cancel?: AbortSignal) {
+  return generateJson(
+    model,
+    {
+      system: EXTRACTION_SYSTEM_PROMPT,
+      parts: [{ inline_data: { mime_type: file.mimeType, data: file.data.toString("base64") } }, { text: EXTRACTION_USER_PROMPT }],
+      schema: geminiResponseSchema,
+    },
+    timeoutMs,
+    cancel,
+  );
 }

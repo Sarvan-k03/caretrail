@@ -1,7 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { PROFILE_COOKIE } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema, signupSchema, safeNext } from "@/lib/schemas/auth";
 
@@ -58,6 +59,7 @@ export async function signup(_prev: AuthState, form: FormData): Promise<AuthStat
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  (await cookies()).delete(PROFILE_COOKIE);
   redirect("/");
 }
 

@@ -240,6 +240,39 @@ export type Database = {
           { foreignKeyName: "documents_patient_id_fkey"; columns: ["patient_id"]; isOneToOne: false; referencedRelation: "patients"; referencedColumns: ["id"] },
         ];
       };
+      dose_logs: {
+        Row: {
+          id: string;
+          patient_id: string;
+          medication_id: string;
+          dose_date: string;
+          slot: string;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          patient_id: string;
+          medication_id: string;
+          dose_date: string;
+          slot: string;
+          status: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          patient_id?: string;
+          medication_id?: string;
+          dose_date?: string;
+          slot?: string;
+          status?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "dose_logs_patient_id_fkey"; columns: ["patient_id"]; isOneToOne: false; referencedRelation: "patients"; referencedColumns: ["id"] },
+          { foreignKeyName: "dose_logs_medication_id_fkey"; columns: ["medication_id"]; isOneToOne: false; referencedRelation: "medications"; referencedColumns: ["id"] },
+        ];
+      };
       drug_interactions: {
         Row: {
           generic_a: string;
@@ -265,6 +298,39 @@ export type Database = {
         Relationships: [
           { foreignKeyName: "drug_interactions_generic_a_fkey"; columns: ["generic_a"]; isOneToOne: false; referencedRelation: "generics"; referencedColumns: ["generic"] },
           { foreignKeyName: "drug_interactions_generic_b_fkey"; columns: ["generic_b"]; isOneToOne: false; referencedRelation: "generics"; referencedColumns: ["generic"] },
+        ];
+      };
+      explanations: {
+        Row: {
+          document_id: string;
+          patient_id: string;
+          lang: string;
+          input_hash: string;
+          content: Json;
+          model: string;
+          created_at: string;
+        };
+        Insert: {
+          document_id: string;
+          patient_id: string;
+          lang: string;
+          input_hash: string;
+          content: Json;
+          model: string;
+          created_at?: string;
+        };
+        Update: {
+          document_id?: string;
+          patient_id?: string;
+          lang?: string;
+          input_hash?: string;
+          content?: Json;
+          model?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "explanations_document_id_fkey"; columns: ["document_id"]; isOneToOne: false; referencedRelation: "documents"; referencedColumns: ["id"] },
+          { foreignKeyName: "explanations_patient_id_fkey"; columns: ["patient_id"]; isOneToOne: false; referencedRelation: "patients"; referencedColumns: ["id"] },
         ];
       };
       extraction_cache: {
@@ -483,6 +549,8 @@ export type Database = {
           emergency_token_created_at: string | null;
           is_demo_template: boolean;
           created_at: string;
+          relationship: string;
+          reminder_times: Json;
         };
         Insert: {
           id?: string;
@@ -498,6 +566,8 @@ export type Database = {
           emergency_token_created_at?: string | null;
           is_demo_template?: boolean;
           created_at?: string;
+          relationship?: string;
+          reminder_times?: Json;
         };
         Update: {
           id?: string;
@@ -513,6 +583,8 @@ export type Database = {
           emergency_token_created_at?: string | null;
           is_demo_template?: boolean;
           created_at?: string;
+          relationship?: string;
+          reminder_times?: Json;
         };
         Relationships: [
 

@@ -21,6 +21,9 @@ import { ReviewForm } from "@/components/records/review-form";
 import { ProcessingWatcher } from "@/components/records/processing-watcher";
 import { SavedFacts } from "@/components/records/saved-facts";
 import { dosesPerDay, readDosing } from "@/lib/normalise/frequency";
+import { ExplainResults } from "@/components/records/explain-results";
+import { inputHash } from "@/lib/explain/run";
+import { labStatus, LANGS, type Lang, type StoredExplanation } from "@/lib/explain/input";
 
 export const metadata: Metadata = { title: "Record" };
 
@@ -109,13 +112,22 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
     );
   }
 
-  const [meds, labs, conds, ranges] = await Promise.all([
+  const [meds, labs, conds, ranges, explained] = await Promise.all([
     supabase.from("medications").select("*").eq("source_document_id", doc.id).order("created_at"),
     supabase.from("lab_results").select("*").eq("source_document_id", doc.id).order("created_at"),
     supabase.from("conditions").select("*").eq("source_document_id", doc.id).order("created_at"),
     supabase.from("lab_reference_ranges").select("test_code, low, high"),
+    supabase.from("explanations").select("lang, input_hash, content").eq("document_id", doc.id),
   ]);
   const skipped = doc.extraction_status === "skipped";
+  // Saved explanations are shown only while they still match the results (an edit makes them stale).
+  const labRows = labs.data ?? [];
+  const explanations: Partial<Record<Lang, StoredExplanation>> = Object.fromEntries(
+    LANGS.flatMap((lang) => {
+      const row = explained.data?.find((e) => e.lang === lang);
+      return row && labRows.length && row.input_hash === inputHash(labRows, lang) ? [[lang, row.content as StoredExplanation]] : [];
+    }),
+  );
 
   return (
     <>
@@ -142,7 +154,18 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
             <DocumentPreview documentId={doc.id} />
           </div>
           <div className="order-1 lg:order-2">
-            {skipped ? null : <SavedFacts medications={meds.data ?? []} labs={labs.data ?? []} conditions={conds.data ?? []} ranges={ranges.data ?? []} />}
+            {skipped ? null : (
+              <div className="space-y-6">
+                <SavedFacts medications={meds.data ?? []} labs={labRows} conditions={conds.data ?? []} ranges={ranges.data ?? []} />
+                {labRows.length && doc.extraction_status === "completed" ? (
+                  <ExplainResults
+                    documentId={doc.id}
+                    labs={labRows.map((l) => ({ id: l.id, test_name: l.test_name, value: l.value_text ?? (l.value !== null ? String(l.value) : null), unit: l.unit, status: labStatus(l) }))}
+                    initial={explanations}
+                  />
+                ) : null}
+              </div>
+            )}
           </div>
         </div>
       </PageBody>

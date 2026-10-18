@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Atkinson_Hyperlegible_Next, Atkinson_Hyperlegible_Mono, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
+import { ServiceWorker } from "@/components/service-worker";
 
 const sans = Atkinson_Hyperlegible_Next({ variable: "--font-atkinson", subsets: ["latin", "latin-ext"], adjustFontFallback: false });
 const serif = Source_Serif_4({ variable: "--font-source-serif", subsets: ["latin"], axes: ["opsz"], style: ["normal", "italic"] });
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
   title: { default: "CareTrail", template: "%s · CareTrail" },
   description: "Your prescriptions and lab reports on one verified timeline, shared safely with the doctors you choose.",
   robots: { index: false, follow: false },
+  icons: { apple: "/icons/apple-touch-icon.png" },
+  appleWebApp: { capable: true, title: "CareTrail", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -22,7 +25,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <ServiceWorker />
+      </body>
     </html>
   );
 }

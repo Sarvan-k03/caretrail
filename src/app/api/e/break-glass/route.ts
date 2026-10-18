@@ -79,8 +79,8 @@ export async function POST(request: Request) {
     alerts.push(() =>
       sendEmail(
         ownerEmail,
-        "Emergency full access to your CareTrail record",
-        `${who} used emergency full access to your record on ${when} (IST). It ends automatically at ${until}.\n\nYou can end it earlier from Sharing in CareTrail. The access is recorded in your access history and cannot be removed.\n\nCareTrail`,
+        patient.relationship === "self" ? "Emergency full access to your CareTrail record" : `Emergency full access to ${patient.name}'s CareTrail record`,
+        `${who} used emergency full access to ${patient.relationship === "self" ? "your" : `${patient.name}'s`} record on ${when} (IST). It ends automatically at ${until}.\n\nYou can end it earlier from Sharing in CareTrail. The access is recorded in your access history and cannot be removed.\n\nCareTrail`,
       ),
     );
   }

@@ -89,3 +89,25 @@ export function readDosing(m: { brand_name: string; frequency?: string | null; q
   const fromQuantity = m.duration_days ? null : daysFromQuantity(quantity, frequency, `${m.brand_name} ${m.source_text}`);
   return { frequency, quantity, duration_days: m.duration_days ?? fromQuantity, daysFromQuantity: fromQuantity !== null };
 }
+
+export type DoseSlot = "morning" | "afternoon" | "evening" | "night";
+
+const TOKEN_SLOTS: [RegExp, DoseSlot[]][] = [
+  [/\b(qid|qds)\b/i, ["morning", "afternoon", "evening", "night"]],
+  [/\b(tds|tid)\b/i, ["morning", "afternoon", "night"]],
+  [/\b(bd|bid)\b/i, ["morning", "night"]],
+  [/\bhs\b/i, ["night"]],
+  [/\b(od|qd)\b/i, ["morning"]],
+];
+
+/** When in the day each dose falls, for reminders. Null when it cannot be told or is only taken when needed. */
+export function doseSlots(raw: string | null | undefined): DoseSlot[] | null {
+  if (!raw || /\b(sos|prn|stat)\b/i.test(raw)) return null;
+  const parts = slotParts(raw);
+  if (parts) {
+    const names: DoseSlot[] = parts.length === 4 ? ["morning", "afternoon", "evening", "night"] : ["morning", "afternoon", "night"];
+    const taken = names.filter((_, i) => (parts[i] === "½" ? 0.5 : Number(parts[i])) > 0);
+    return taken.length ? taken : null;
+  }
+  return TOKEN_SLOTS.find(([re]) => re.test(raw))?.[1] ?? null;
+}

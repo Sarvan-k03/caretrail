@@ -7,12 +7,17 @@ import { PageBody, PageHeader, SheetSection } from "@/components/ui/page";
 import { buttonClass } from "@/components/ui/button";
 import { EmergencyPreview } from "@/components/patient/emergency-preview";
 import { EmergencyQrManager } from "@/components/emergency/emergency-qr-manager";
+import { OfflineCardSettings } from "@/components/offline/offline-card-settings";
+import { buildEmergencyCard } from "@/lib/emergency/card";
 
 export const metadata: Metadata = { title: "Emergency card" };
 
 export default async function EmergencyCardPage() {
   const { patient } = await requirePatient();
-  const { data: allergies } = await (await createClient()).from("allergies").select("*").eq("patient_id", patient.id).order("created_at");
+  const [{ data: allergies }, card] = await Promise.all([
+    (await createClient()).from("allergies").select("*").eq("patient_id", patient.id).order("created_at"),
+    buildEmergencyCard(patient),
+  ]);
   return (
     <>
       <PageHeader title="Your emergency card" subtitle="If you cannot speak, a hospital can still see your allergies, medicines and who to call." />
@@ -26,6 +31,9 @@ export default async function EmergencyCardPage() {
             contact: patient.emergency_contact_phone ? `${patient.emergency_contact_name ?? ""} ${patient.emergency_contact_phone}`.trim() : null,
           }}
         />
+        <SheetSection id="offline" title="Works with no signal" description="Keep a copy of this card on your phone. Add CareTrail to your home screen to open it in one tap.">
+          <OfflineCardSettings patientId={patient.id} card={card} />
+        </SheetSection>
         <SheetSection
           id="preview"
           title="What responders see first"

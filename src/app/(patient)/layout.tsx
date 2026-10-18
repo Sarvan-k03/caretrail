@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { SignOut } from "@phosphor-icons/react/ssr";
 import { Wordmark } from "@/components/wordmark";
 import { HeaderTabs, BottomTabs } from "@/components/patient/nav";
-import { logout } from "@/app/(auth)/actions";
 import { LiveViewerPill } from "@/components/sharing/live-viewer-pill";
 import { AlertsBell } from "@/components/alerts/alerts-bell";
-import { buttonClass } from "@/components/ui/button";
+import { LogoutButton } from "@/components/patient/logout-button";
+import { ProfileSwitcher } from "@/components/patient/profile-switcher";
+import { requirePatient } from "@/lib/auth";
+import { DoseReminders } from "@/components/medicines/dose-reminders";
 
-export default function PatientLayout({ children }: { children: React.ReactNode }) {
+export default async function PatientLayout({ children }: { children: React.ReactNode }) {
+  const { patient, profiles } = await requirePatient();
   return (
     <div className="min-h-dvh pb-24 md:pb-0">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-30 focus:rounded-control focus:bg-sheet focus:px-4 focus:py-2">
@@ -20,20 +22,18 @@ export default function PatientLayout({ children }: { children: React.ReactNode 
           </Link>
           <HeaderTabs />
           <div className="flex items-center gap-1 sm:gap-2">
+            {profiles.length > 1 ? (
+              <ProfileSwitcher profiles={profiles.map((p) => ({ id: p.id, name: p.name, relationship: p.relationship }))} activeId={patient.id} />
+            ) : null}
             <LiveViewerPill />
             <AlertsBell />
-            <form action={logout}>
-              <button type="submit" className={buttonClass("quiet", "dense")}>
-                <SignOut aria-hidden className="size-5" />
-                <span className="hidden sm:inline">Log out</span>
-                <span className="sr-only sm:hidden">Log out</span>
-              </button>
-            </form>
+            <LogoutButton />
           </div>
         </div>
       </header>
       <main id="main">{children}</main>
       <BottomTabs />
+      <DoseReminders key={patient.id} />
     </div>
   );
 }

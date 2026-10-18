@@ -10,13 +10,15 @@ import { RecordRow } from "@/components/records/recent-records";
 import { EmptyState } from "@/components/ui/empty-state";
 import { RangeLine } from "@/components/ui/range-line";
 import { loadTrends, type TrendPoint } from "@/lib/records/trends";
-import { formatDate } from "@/lib/format";
+import { formatDate, todayIST } from "@/lib/format";
 import { loadMedicines, loadTestSaver } from "@/lib/safety/load";
 import { cookies } from "next/headers";
 import { DISMISS_COOKIE, loadAlerts, parseDismissed } from "@/lib/alerts";
 import { HomeAlerts } from "@/components/alerts/home-alerts";
 import { SAFETY_NOTE } from "@/lib/safety/engine";
 import { cn } from "@/lib/cn";
+import { readTimes, todaysDoses } from "@/lib/doses/schedule";
+import { TodayDoses } from "@/components/medicines/today-doses";
 
 export const metadata: Metadata = { title: "Home" };
 
@@ -38,7 +40,13 @@ export default async function HomePage() {
       .order("created_at", { ascending: false })
       .limit(6),
   ]);
-  const [meds, saver] = await Promise.all([loadMedicines(supabase, patient.id), loadTestSaver(supabase, patient.id)]);
+  const doseDate = todayIST();
+  const [meds, saver, { data: doseLogs }] = await Promise.all([
+    loadMedicines(supabase, patient.id),
+    loadTestSaver(supabase, patient.id),
+    supabase.from("dose_logs").select("medication_id, dose_date, slot, status").eq("patient_id", patient.id).eq("dose_date", doseDate),
+  ]);
+  const doses = todaysDoses(meds.groups, doseLogs ?? [], doseDate, readTimes(patient.reminder_times));
   const urgent = meds.warnings.filter((w) => w.level !== "info");
   const doctors = new Set(meds.groups.map((g) => g.current.prescriber).filter(Boolean)).size;
   const validTests = saver.tests.filter((t) => t.valid);
@@ -117,6 +125,8 @@ export default async function HomePage() {
             </Link>
           </section>
         ) : null}
+
+        {doses.slots.length ? <TodayDoses key={`${patient.id}-${doseDate}`} today={doseDate} slots={doses.slots} unscheduled={doses.unscheduled} /> : null}
 
         {meds.groups.length || saver.tests.length ? (
           <div className="grid gap-4 sm:grid-cols-2">

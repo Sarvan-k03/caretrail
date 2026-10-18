@@ -31,10 +31,12 @@ export async function GET(request: Request) {
     const { data: owner } = await admin.auth.admin.getUserById(patient.owner_user_id);
     const email = owner.user?.email;
     if (email) {
+      // A family profile's alerts go to the account holder, so they name whose card it was.
+      const own = patient.relationship === "self";
       await sendEmail(
         email,
-        "Your CareTrail emergency card was scanned",
-        `Your emergency card was scanned on ${formatDateTime(new Date().toISOString())} (IST).\n\nIt showed your blood group, allergies, current medicines, main conditions and emergency contact. If this was not expected, open CareTrail and make a new emergency QR; the old one stops working at once.\n\nCareTrail`,
+        own ? "Your CareTrail emergency card was scanned" : `${patient.name}'s CareTrail emergency card was scanned`,
+        `${own ? "Your" : `${patient.name}'s`} emergency card was scanned on ${formatDateTime(new Date().toISOString())} (IST).\n\nIt showed ${own ? "your" : "their"} blood group, allergies, current medicines, main conditions and emergency contact. If this was not expected, open CareTrail and make a new emergency QR; the old one stops working at once.\n\nCareTrail`,
       );
     }
   }

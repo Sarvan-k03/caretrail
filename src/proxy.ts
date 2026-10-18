@@ -1,8 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// Pages anyone may open. Token pages (/s, /e) are checked by their own API calls.
-const PUBLIC_PATHS = ["/", "/login", "/signup", "/privacy"];
+// Pages anyone may open. Token pages (/s, /e) are checked by their own API calls; the offline pages hold no data.
+const PUBLIC_PATHS = ["/", "/login", "/signup", "/privacy", "/offline", "/offline-card"];
 const PUBLIC_PREFIXES = ["/s", "/e", "/auth"];
 
 function isPublic(pathname: string) {

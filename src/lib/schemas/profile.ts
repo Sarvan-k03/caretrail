@@ -28,3 +28,19 @@ export const allergySchema = z.object({
   severity: z.enum(SEVERITIES, "Choose how serious it is."),
   reaction: z.preprocess(blank, z.string().trim().max(200).nullable()),
 });
+
+export const RELATIONSHIPS = ["parent", "child", "spouse", "sibling", "other"] as const;
+export const RELATIONSHIP_LABELS: Record<string, string> = {
+  self: "You",
+  parent: "Parent",
+  child: "Child",
+  spouse: "Spouse",
+  sibling: "Brother or sister",
+  other: "Family",
+};
+
+export const familyProfileSchema = z.object({
+  name: z.string().trim().min(1, "Enter their name.").max(120),
+  relationship: z.enum(RELATIONSHIPS, "Choose how they are related to you."),
+  dob: profileSchema.shape.dob,
+});

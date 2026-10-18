@@ -4,6 +4,8 @@
 
 <h1 align="center">CareTrail</h1>
 
+<p align="center"><a href="https://github.com/Sarvan-k03/caretrail/actions/workflows/ci.yml"><img src="https://github.com/Sarvan-k03/caretrail/actions/workflows/ci.yml/badge.svg" alt="CI"></a></p>
+
 <p align="center"><b>Your health history, understood, safe, and in the right doctor's hands only when you say so.</b></p>
 
 ![CareTrail landing page](.github/readme/screenshots/landing.png)
@@ -146,9 +148,35 @@ Three surfaces, one design system: a warm, simple **patient app** (built for a 5
 - **Emergency full access (break-glass):** a hospital doctor can open the full record for **2 hours** by entering their name, hospital and medical registration number. It is permanently logged, the patient and the emergency contact are **emailed at once**, and the patient can end it early.
 - Lost the phone or wallet? **Make a new QR** and the old one stops working immediately.
 
-### 8. And also
+### 8. Today's medicines and reminders
+
+- **Today's medicines** on Home: every current medicine in the morning, afternoon, evening or night slot its prescription names (*1-0-1* is morning and night, *BD* twice a day). One tap marks a dose taken or skipped, and an accidental tap can be undone.
+- **Reminders** at the times the patient chooses for each part of the day, shown as phone notifications while CareTrail is open or installed. A dose already ticked never triggers one.
+- **The last 7 days** on the Medicines page: doses taken out of doses due, per medicine, to show the doctor.
+- Medicines taken *only when needed* (SOS) are never scheduled.
+
+### 9. What do my results mean? (English and Tamil)
+
+- On any saved lab report, **Explain in simple English** or **தமிழில் விளக்கவும்** gives a short summary, what each test measures, what the result means, and up to three questions to ask the doctor.
+- Whether a value is inside the lab's range is **worked out by CareTrail from the printed range**, never by the AI, and the AI is told not to contradict it, diagnose or suggest medicines.
+- Only test names, values, units and ranges are sent; never the patient's name or profile. The explanation is for the patient only and **never reaches the doctor's view**. It is saved, and made again only if the results change.
+
+### 10. Family profiles
+
+- One account keeps records for **a parent, child, spouse or other relative** (up to 6 profiles). Each has its own medicines, safety checks, sharing links, emergency card and reminders.
+- A switcher in the header shows **whose record is open**. Emergency alert emails name the family member whose card was used.
+
+### 11. Installable app and an emergency card that works offline
+
+- **Add to home screen** on Android and iOS, with a shortcut straight to the emergency card.
+- **Keep a copy on this phone:** the emergency card opens with **no signal** (a lift, a basement, a village), in the same high-contrast design. The copy refreshes each time the card page is opened online and is removed on log out.
+- When offline, any other page shows a clear *You are offline* screen with a button to the card. Health records themselves are **never cached** on the device.
+
+### 12. And also
+
 
 - **Sign in with email or Google.**
+- **Delete my account** from Profile: login, every profile, record and stored file removed at once, after typing DELETE to confirm.
 - **Profile:** blood group, allergies (with severity and reaction), emergency contact (name, phone, email).
 - **Download my record (FHIR):** the whole record as a FHIR R4 file (Patient, Condition, MedicationStatement, Observation with LOINC codes where certain, AllergyIntolerance), each fact noting its source, for any hospital system.
 - **Privacy policy** at `/privacy`.
@@ -272,11 +300,12 @@ Import the repository in Vercel, add the variables above (all except `SUPABASE_D
 
 ```bash
 npm run typecheck && npm run lint && npm run build
-npm test                                                   # 51 unit tests (normalisation, safety engine, Test Saver, scope, FHIR)
+npm test                                                   # 64 unit tests (normalisation, safety engine, Test Saver, scope, FHIR, dose schedule, explanations)
 node --env-file=.env.local scripts/e2e/phase-b.mjs         # one browser suite (needs the dev server and Chrome)
 E2E_BASE_URL=https://<your-site> node --env-file=.env.local scripts/e2e/phase-ef.mjs   # against the live site
 ```
 
+- **GitHub Actions** (`.github/workflows/ci.yml`) runs typecheck, lint, unit tests and a production build on every push and pull request.
 - **15 browser suites** (`scripts/e2e/phase-a.mjs` to `phase-p.mjs`, about 200 checks) run the real flows end to end, including real AI reading of the sample documents. Each creates its own temporary account and removes it afterwards.
 - `scripts/e2e/audit.mjs`: accessibility audit (axe-core, WCAG 2.1 AA) of every screen.
 - `scripts/e2e/mobile-shots.mjs`: captures every screen at 360 and 390 px and fails on sideways scrolling.
@@ -305,6 +334,9 @@ src/
     brief/             the doctor's brief, built from database rows only
     records/           check screen, saving facts, timeline, trends
     export/            FHIR R4 bundle
+    doses/             dose slots from the written pattern, today's checklist, 7-day adherence, reminders
+    explain/           plain-language lab explanations: input, prompt, validation
+    account/           deleting a profile or the whole account, files included
 supabase/migrations/   schema, row-level security, triggers, reference data (55 generics,
                        about 100 brands, 293 DDInter interaction pairs, test validity)
 scripts/               migrations, type generation, test account, sample document builder, browser tests
@@ -319,11 +351,13 @@ demo-docs/             simulated prescriptions and lab reports (PDFs and phone-s
 - Interaction checks cover the medicines in the DDInter dataset (55 curated generics).
 - Doctors are identified by the name and registration number they type; these are not verified against the medical council register.
 - Typed consultation notes are stored with a standard font, so letters outside the Latin alphabet are replaced.
+- Reminders are shown by the open or installed app; phones may delay them when CareTrail has been closed for a long time. True push reminders need a push server (next step).
 
 **Next steps**
 - WhatsApp: forward a report to CareTrail's number and it joins the record; emergency alerts on WhatsApp.
 - Verified doctor accounts through India's National Medical Register or the ABDM Healthcare Professionals Registry.
-- Family profiles managed from one account; plain-language explanations of results, in Tamil too.
+- Push reminders that arrive even when the app is closed (Web Push with a scheduled sender), and reminders on WhatsApp.
+- Shared family access, so two carers can look after the same parent from their own accounts.
 
 ## Disclosures
 
