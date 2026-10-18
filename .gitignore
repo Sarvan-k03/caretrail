@@ -1,0 +1,33 @@
+# secrets
+.env*
+!.env.example
+
+# deps and builds
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+
+# local tooling and source material that is not ours to publish
+.DS_Store
+.agents/
+graphify-out/
+.impeccable/
+CareTrail — Product Requirements Document.pdf
+public/pdf.worker.min.mjs
+
+# real documents used for recording the demo video: never published
+uploads/
+
+# internal notes and planning material: kept locally, never published
+CLAUDE.md
+.claude/
+AGENTS.md
+PRODUCT.md
+STATUS.md
+skills-lock.json
+docs/

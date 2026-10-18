@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/* Design tokens. Tailwind's default scales are cleared so only these exist. */
+
+:root {
+  color-scheme: light;
+  --paper: #f4f2ed;
+  --sheet: #fffefc;
+  --sheet-sunk: #eeebe4;
+  --ink: #1a1c21;
+  --ink-2: #4a4d55;
+  --ink-3: #63666e;
+  --rule: #e3dfd7;
+  --rule-strong: #8e8a82;
+  --primary: #1d2f6f;
+  --primary-strong: #15235a;
+  --primary-soft: #e6e9f3;
+  --on-primary: #fffefc;
+  --severe: #b42318;
+  --severe-soft: #fcebe8;
+  --severe-rule: #efb7af;
+  --verify: #8a4b00;
+  --verify-soft: #fcf0db;
+  --verify-rule: #e5c27f;
+  --verified: #13693a;
+  --verified-soft: #e3f1e8;
+  --verified-rule: #a3cfb2;
+  /* Chart series: validated with the dataviz palette checker (band, chroma, CVD, contrast) on #fffefc. */
+  --chart-1: #2f5fc4;
+  --chart-2: #c2417f;
+  --shadow-tint: 40 34 24;
+  /* Logo colours: the same in every theme, so the mark never changes. */
+  --brand-mark: #1d2f6f;
+  --brand-mark-light: #9db0f2;
+  --brand-mark-white: #fffefc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: #121316;
+    --sheet: #1a1c20;
+    --sheet-sunk: #22252a;
+    --ink: #edebe6;
+    --ink-2: #bdbab2;
+    --ink-3: #a19e96;
+    --rule: #2c2e33;
+    --rule-strong: #6b6a66;
+    --primary: #9db0f2;
+    --primary-strong: #c0cdf7;
+    --primary-soft: #1f2745;
+    --on-primary: #121316;
+    --severe: #ff8f84;
+    --severe-soft: #3a1916;
+    --severe-rule: #6a2c26;
+    --verify: #f2b657;
+    --verify-soft: #33270f;
+    --verify-rule: #5f4719;
+    --verified: #74d19c;
+    --verified-soft: #12291c;
+    --verified-rule: #285a3c;
+    --chart-1: #5f86e6;
+    --chart-2: #d9649f;
+    --shadow-tint: 0 0 0;
+  }
+}
+
+/* The emergency card ignores the theme: bright ER lighting, maximum contrast. */
+.emergency-surface {
+  color-scheme: light;
+  --paper: #ffffff;
+  --sheet: #ffffff;
+  --sheet-sunk: #f1f2f4;
+  --ink: #0b0c0e;
+  --ink-2: #2b2f36;
+  --ink-3: #3f4550;
+  --rule: #c9ced6;
+  --rule-strong: #6b7280;
+  --primary: #15235a;
+  --primary-strong: #0f1a45;
+  --primary-soft: #e6e9f3;
+  --on-primary: #ffffff;
+  --severe: #a11b12;
+  --severe-soft: #fdecea;
+  --severe-rule: #e59b93;
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-paper: var(--paper);
+  --color-sheet: var(--sheet);
+  --color-sheet-sunk: var(--sheet-sunk);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-severe: var(--severe);
+  --color-severe-soft: var(--severe-soft);
+  --color-severe-rule: var(--severe-rule);
+  --color-verify: var(--verify);
+  --color-verify-soft: var(--verify-soft);
+  --color-verify-rule: var(--verify-rule);
+  --color-verified: var(--verified);
+  --color-verified-soft: var(--verified-soft);
+  --color-verified-rule: var(--verified-rule);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-brand-mark: var(--brand-mark);
+  --color-brand-mark-light: var(--brand-mark-light);
+  --color-brand-mark-white: var(--brand-mark-white);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-*: initial;
+  --font-sans: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-atkinson-mono), ui-monospace, monospace;
+
+  --text-*: initial;
+  --text-meta: 0.875rem;
+  --text-meta--line-height: 1.35;
+  --text-dense: 1rem;
+  --text-dense--line-height: 1.45;
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.55;
+  --text-lead: 1.25rem;
+  --text-lead--line-height: 1.45;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.01em;
+  --text-display: 2.125rem;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+  --text-headline: 2.75rem;
+  --text-headline--line-height: 1.05;
+  --text-headline--letter-spacing: -0.025em;
+  --text-hero: 4rem;
+  --text-hero--line-height: 1.02;
+  --text-hero--letter-spacing: -0.03em;
+  --text-emergency: 3rem;
+  --text-emergency--line-height: 1.05;
+  --text-emergency--letter-spacing: -0.02em;
+
+  --radius-*: initial;
+  --radius-control: 12px;
+  --radius-card: 18px;
+  --radius-media: 28px;
+  --radius-pill: 9999px;
+
+  --shadow-*: initial;
+  --shadow-card: 0 1px 2px rgb(var(--shadow-tint) / 0.05);
+  --shadow-float: 0 18px 40px -12px rgb(var(--shadow-tint) / 0.28), 0 4px 10px rgb(var(--shadow-tint) / 0.08);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--primary-soft);
+    color: var(--ink);
+  }
+  input,
+  textarea,
+  select {
+    caret-color: var(--primary);
+  }
+  :focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+  }
+  a {
+    text-underline-offset: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0ms !important;
+      animation-duration: 0ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}
+
+/* Printing from the emergency card page prints only the wallet card, at real size. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #wallet-card,
+  #wallet-card * {
+    visibility: visible;
+  }
+  #wallet-card {
+    position: absolute;
+    top: 12mm;
+    left: 12mm;
+  }
+}
