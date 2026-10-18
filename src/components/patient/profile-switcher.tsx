@@ -51,7 +51,8 @@ export function ProfileSwitcher({ profiles, activeId }: { profiles: Profile[]; a
         <CaretDown aria-hidden className="size-4 text-ink-2" />
       </button>
       {open ? (
-        <div id={panelId} className="absolute right-0 z-30 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-card border border-rule bg-sheet p-2 shadow-float">
+        // Phones: full width under the header, since the button sits mid-header and a right-aligned panel runs off-screen.
+        <div id={panelId} className="fixed inset-x-4 top-20 z-30 rounded-card border border-rule bg-sheet p-2 shadow-float sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-2 sm:w-72">
           <p className="px-3 pt-2 pb-1 text-meta font-semibold text-ink-2">Whose record?</p>
           <ul>
             {profiles.map((p) => (

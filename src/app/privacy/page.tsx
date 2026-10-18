@@ -19,7 +19,7 @@ const SECTIONS: { title: string; body: string[] }[] = [
   {
     title: "Where it is kept",
     body: [
-      "Data is stored with Supabase (database and private file storage) in Sydney, Australia, and the app runs on Vercel. Files are never public: they are opened through links that expire after 5 minutes.",
+      "Data is stored with Supabase (database and private file storage) in Mumbai, India, and the app runs on Vercel in Mumbai. Files are never public: they are opened through links that expire after 5 minutes.",
       "Each account can only read its own records. A doctor sees only what you choose to share, for as long as you choose, and you can end access at any time.",
     ],
   },

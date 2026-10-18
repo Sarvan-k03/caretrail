@@ -215,7 +215,7 @@ sequenceDiagram
   App-->>Dr: Access ended (within about 3 s)
 ```
 
-**Tech stack:** Next.js 16 (App Router) and React 19 in TypeScript (strict), Tailwind CSS 4, hosted on Vercel (Sydney region). Supabase Postgres with row-level security, Supabase Auth (email and Google) and private Storage, also in Sydney. Google Gemini for document reading, Brevo for alert emails, pdf.js for showing documents with highlights, Recharts for trends.
+**Tech stack:** Next.js 16 (App Router) and React 19 in TypeScript (strict), Tailwind CSS 4, hosted on Vercel (Mumbai region). Supabase Postgres with row-level security, Supabase Auth (email and Google) and private Storage, also in Mumbai. Google Gemini for document reading, Brevo for alert emails, pdf.js for showing documents with highlights, Recharts for trends.
 
 ## Security and privacy
 
@@ -294,7 +294,7 @@ The *Continue with Google* button appears by itself once the provider is on.
 
 ### Deploy to Vercel
 
-Import the repository in Vercel, add the variables above (all except `SUPABASE_DB_URL`) to Production and Preview, and deploy. `vercel.json` pins the functions to Sydney (`syd1`) to sit next to the database.
+Import the repository in Vercel, add the variables above (all except `SUPABASE_DB_URL`) to Production and Preview, and deploy. `vercel.json` pins the functions to Mumbai (`bom1`) to sit next to the database.
 
 ## Testing
 
